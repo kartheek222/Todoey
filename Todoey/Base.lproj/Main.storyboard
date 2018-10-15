@@ -52,7 +52,13 @@
                             <outlet property="delegate" destination="eOr-MR-KHo" id="0df-Rj-0nd"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Todoey" id="gXU-iC-4XR"/>
+                    <navigationItem key="navigationItem" title="Todoey" id="gXU-iC-4XR">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="fGg-rO-tB7">
+                            <connections>
+                                <action selector="addButtonPressed:" destination="eOr-MR-KHo" id="AP9-Pv-XgX"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="listTableView" destination="qcu-Ez-B7N" id="TJg-ay-ieT"/>
                     </connections>

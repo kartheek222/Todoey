@@ -11,13 +11,33 @@ import UIKit
 class TodoListViewController: UITableViewController {
     @IBOutlet var listTableView: UITableView!
     
-    let itemArray = ["Item 1","Item 2", "Item 3"];
+    var itemArray = ["Item 1","Item 2", "Item 3"];
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         configureTableView();
     }
 
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        let alertController = UIAlertController(title: "Add Todoey title", message: "", preferredStyle: .alert);
+        
+        var textField : UITextField?
+        let addAction = UIAlertAction(title: "Add Item", style: .default) { (action) in
+           if let todoTitle = textField?.text {
+                self.itemArray.append(todoTitle);
+               self.listTableView.reloadData();
+            }
+        }
+        alertController.addAction(addAction);
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alertController.addTextField { (titleTextField) in
+            titleTextField.placeholder = "Create new item";
+            textField = titleTextField;
+        }
+        present(alertController, animated: true, completion: nil);
+        
+    }
+    
     private func configureTableView(){
     }
     
