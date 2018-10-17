@@ -12,10 +12,15 @@ class TodoListViewController: UITableViewController {
     @IBOutlet var listTableView: UITableView!
     
     var itemArray = ["Item 1","Item 2", "Item 3"];
+    
+    let userDefaults = UserDefaults.standard;
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        configureTableView();
+        if let itemsList = userDefaults.array(forKey: "TodoList") as? [String]{
+            itemArray = itemsList;
+        }
     }
 
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
@@ -25,7 +30,9 @@ class TodoListViewController: UITableViewController {
         let addAction = UIAlertAction(title: "Add Item", style: .default) { (action) in
            if let todoTitle = textField?.text {
                 self.itemArray.append(todoTitle);
-               self.listTableView.reloadData();
+                //Updating the data in the userDefaults
+                self.userDefaults.setValue(self.itemArray, forKey: "TodoList");
+                self.listTableView.reloadData();
             }
         }
         alertController.addAction(addAction);
