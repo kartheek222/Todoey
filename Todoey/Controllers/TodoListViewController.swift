@@ -17,7 +17,7 @@ class TodoListViewController: UITableViewController {
 
     var parentCategory : Category?{
         didSet{
-            loadData()
+           // loadData()
         }
     };
 //    let userDefaults = UserDefaults.standard;
