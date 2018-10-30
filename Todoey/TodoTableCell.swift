@@ -7,8 +7,8 @@
 //
 
 import UIKit
-
-class TodoTableCell: UITableViewCell {
+import SwipeCellKit
+class TodoTableCell: SwipeTableViewCell {
 
     @IBOutlet weak var messageCell: UILabel!
 

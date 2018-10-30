@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class TodoListViewController: UITableViewController {
+class TodoListViewController: SwipeTableViewController {
     @IBOutlet var listTableView: UITableView!
     
     var itemArray : Results<Item>?
@@ -28,10 +28,24 @@ class TodoListViewController: UITableViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         print("plist file path : \(String(describing: dataFilePath))")
-
+        listTableView.rowHeight = 80;
         loadData()
+        
     }
 
+    override func updateModel(at indexPath: IndexPath) {
+        if let deleteItem = self.itemArray?[indexPath.row]{
+              do{
+                  try self.realm.write {
+                      self.realm.delete(deleteItem);
+                  }
+//                listTableView.reloadData();
+              }catch{
+                  print("Eror occured while deleting the item \(error)")
+              }
+          }
+    }
+    
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         let alertController = UIAlertController(title: "Add Todoey title", message: "", preferredStyle: .alert);
         
@@ -77,7 +91,7 @@ class TodoListViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let tableCell : TodoTableCell  =  tableView.dequeueReusableCell(withIdentifier: "tableCell") as! TodoTableCell;
+        let tableCell : TodoTableCell  =  super.tableView(tableView, cellForRowAt: indexPath) as! TodoTableCell;
 
         if let item = itemArray?[indexPath.row]{
             tableCell.messageCell.text = item.title;
