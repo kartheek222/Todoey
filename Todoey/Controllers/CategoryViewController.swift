@@ -10,6 +10,8 @@ import UIKit
 import CoreData
 import RealmSwift
 import SwipeCellKit
+import ChameleonFramework
+
 class CategoryViewController: SwipeTableViewController {
 
     @IBOutlet var categoryTableView: UITableView!
@@ -23,6 +25,12 @@ class CategoryViewController: SwipeTableViewController {
         
         loadData()
         categoryTableView.rowHeight = 80;
+        categoryTableView.separatorStyle = .none;
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController!.navigationBar.barTintColor = UIColor.white;
+        
     }
     
     override func updateModel(at indexPath: IndexPath) {
@@ -50,13 +58,29 @@ class CategoryViewController: SwipeTableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let categoryCell = super.tableView(tableView, cellForRowAt: indexPath) as! CategoryCell
-        categoryCell.title.text = itemsArray?[indexPath.row].title ?? "No categories added";
+        if let item = itemsArray?[indexPath.row]{
+            
+            categoryCell.title.text = item.title ;
+//            if let bgColor = item.backgroudColor {
+//                categoryCell.backgroundColor = item.baUIColor.init(hexString: bgColor)
+//            }else{
+//                categoryCell.backgroundColor = UIColor.white;
+//            }
+            categoryCell.backgroundColor = UIColor.init(hexString: item.backgroudColor ) ?? UIColor.white;
+            categoryCell.title.textColor = ContrastColorOf(UIColor(hexString: item.backgroudColor)!, returnFlat: true)
+            
+            
+        }else{
+            categoryCell.title.text = "No categories added";
+            
+        }
         return categoryCell;
         
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: "gotoDetail", sender: self)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -64,6 +88,7 @@ class CategoryViewController: SwipeTableViewController {
         if let selectedIndex = self.categoryTableView.indexPathForSelectedRow {
             destinationVC.parentCategory = itemsArray?[selectedIndex.row];
         }
+        
     }
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
@@ -77,6 +102,7 @@ class CategoryViewController: SwipeTableViewController {
             if (categoryTextField?.text?.count)! > 0{
                 let category = Category();
                 category.title = (categoryTextField?.text)!;
+                category.backgroudColor = UIColor.randomFlat.hexValue();
 //                self.itemsArray.append(category)
                 
                 self.save(category: category);

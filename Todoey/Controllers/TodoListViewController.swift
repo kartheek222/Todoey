@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 class TodoListViewController: SwipeTableViewController {
     @IBOutlet var listTableView: UITableView!
@@ -15,6 +16,7 @@ class TodoListViewController: SwipeTableViewController {
     var itemArray : Results<Item>?
     let realm = try! Realm();
     
+    @IBOutlet weak var searchBar: UISearchBar!
     var parentCategory : Category?{
         didSet{
         //    loadData()
@@ -29,10 +31,31 @@ class TodoListViewController: SwipeTableViewController {
         // Do any additional setup after loading the view, typically from a nib.
         print("plist file path : \(String(describing: dataFilePath))")
         listTableView.rowHeight = 80;
+        listTableView.separatorStyle = .none;
         loadData()
         
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        if let color = UIColor(hexString: parentCategory!.backgroudColor){
+            navigationController!.navigationBar.barTintColor = color;
+            navigationController!.navigationBar.tintColor = ContrastColorOf(color, returnFlat: true)
+            navigationController!.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor : ContrastColorOf(color, returnFlat: true)];
+            searchBar.tintColor = color;
+            title = parentCategory?.title;
+        }
+    }
+    
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        guard let originalColor = UIColor(hexString: "1D9BF6")else {
+            fatalError("Error in parsing the string");
+        }
+        navigationController?.navigationBar.barTintColor = originalColor;
+           navigationController?.navigationBar.tintColor = FlatWhite();
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor : FlatWhite()]
+        
+    }
     override func updateModel(at indexPath: IndexPath) {
         if let deleteItem = self.itemArray?[indexPath.row]{
               do{
@@ -96,6 +119,10 @@ class TodoListViewController: SwipeTableViewController {
         if let item = itemArray?[indexPath.row]{
             tableCell.messageCell.text = item.title;
             tableCell.accessoryType = item.done ? .checkmark : .none;
+            if let color = UIColor(hexString: parentCategory!.backgroudColor)?.darken(byPercentage: (CGFloat(indexPath.row)/CGFloat( itemArray!.count))){
+                tableCell.backgroundColor = color;
+                tableCell.messageCell.textColor = ContrastColorOf(color, returnFlat: true);
+            }
         }else{
             tableCell.messageCell.text = "No items added";
         }
